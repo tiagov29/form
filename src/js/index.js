@@ -3,12 +3,14 @@ const button = document.querySelector("#btn");
 
 let values = {};
 
-let getInput = () => {
+let postUser = () => {
   [...inputs].map((input) => {
     values = { ...values, [input.name]: input.value };
   });
   console.log("values", values);
 };
 button.addEventListener("click", () => {
-  getInput();
+  postUser();
 });
+
+module.exports = { postUser, button, values };
