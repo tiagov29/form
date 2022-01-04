@@ -2,14 +2,13 @@ const mongoose = require("mongoose");
 const express = require("express");
 const config = require("./config");
 const app = express();
+const user = require("./controller/usuario.controller");
 require("dotenv").config;
 const MONGO = config.module.MONGO;
 
 app.use(express.json());
 
 (async () => {
-  const Usuario = await require("./schema/schema");
-
   await mongoose.connect(MONGO, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -21,50 +20,13 @@ app.use(express.json());
     console.log("poniendo a correr mongo desde node, vamos!!!");
   });
 
-  app.get("/obtenerUsuarios", async (req, res) => {
-    const usuarios = await Usuario.find();
-    res.json(usuarios);
-  });
+  app.get("/obtenerUsuarios", user.GetUsers);
 
-  app.post("/crearUsuario", async (req, res) => {
-    const {
-      nombre,
-      apellido,
-      documento,
-      correoElectronico,
-      celular,
-      fechaNacimiento,
-    } = req.body;
-    const NuevoUsuario = await new Usuario({
-      nombre: nombre,
-      apellido: apellido,
-      documento: documento,
-      correoElectronico: correoElectronico,
-      celular: celular,
-      fechaNacimiento: fechaNacimiento,
-    });
-    await NuevoUsuario.save();
-    res.json(NuevoUsuario);
-  });
+  app.post("/crearUsuario", user.createUser);
 
-  app.put("/actualizarUsuario/:id", async (req, res) => {
-    const usuario = await Usuario.findById({ _id: req.params.id });
-    usuario.nombre = req.body.nombre;
-    usuario.apellido = req.body.apellido;
-    usuario.documento = req.body.documento;
-    usuario.correoElectronico = req.body.correoElectronico;
-    usuario.celular = req.body.celular;
-    usuario.fechaNacimiento = req.body.fechaNacimiento;
-    usuario.save();
-    res.json();
-  });
+  app.put("/actualizarUsuario/:id", user.updateUser);
 
-  app.delete("/borrarPlato/:id", async (req, res) => {
-    const eliminarUsuario = await Usuario.findByIdAndDelete({
-      _id: req.params.id,
-    });
-    res.json(await Usuario.find());
-  });
+  app.delete("/eliminarUsuario/:id", user.deleteUser);
 
   app.listen(3000, () => {
     console.log("escuchando en el puerto " + 3000);
