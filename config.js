@@ -2,4 +2,4 @@ const { config } = require("dotenv");
 
 config();
 
-exports.module = { mongo: process.env.mongo };
+exports.module = { MONGO: process.env.MONGO };
